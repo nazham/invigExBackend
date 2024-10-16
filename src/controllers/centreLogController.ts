@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import CentreLog from "../models/CentreLog";
 import Centre, { ICentre } from "../models/ExamCentre";
-import calculateResources from "../utils/resourceAllocator";
+import calculateResources, {
+  CentreStatistics,
+} from "../utils/resourceAllocator";
 
 // Create CentreLog
 export const createCentreLog = async (req: Request, res: Response) => {
@@ -42,7 +44,7 @@ const calculateAndUpdateResourceAllocation = async (centreLogID: string) => {
     // Find the CentreLog by ID, and populate examCenterID with related Centre data
     const centreLog = await CentreLog.findById(centreLogID)
       .populate("examCenterID")
-      .populate("subjectID");
+      .populate("centreStatistics.subjectID");
 
     if (!centreLog) {
       console.error("CentreLog not found");
@@ -51,32 +53,33 @@ const calculateAndUpdateResourceAllocation = async (centreLogID: string) => {
 
     // Type assertion for the populated centreLog
     const centre = centreLog.examCenterID as unknown as ICentre; // <-- Assert the type
+    const centreStat =
+      centreLog.centreStatistics as unknown as CentreStatistics[];
 
-    // // Calculate total students
-    // const totalStudents = centreLog.centreStatistics.reduce(
-    //   (sum: number, stat: any) => sum + stat.appliedStudentsCount,
-    //   0
-    // );
+    // Calculate total students
+    const totalStudents = centreLog.centreStatistics.reduce(
+      (sum: number, stat: any) => sum + stat.appliedStudentsCount,
+      0
+    );
 
-    // //resource calculation
-    // const { roomsNeeded, hallsNeeded, invigilatorsNeeded, students_remaining } =
-    //   calculateResources(
-    //     centre.totalHalls,
-    //     centre.totalRooms,
-    //     centre.roomCapacity,
-    //     centre.hallCapacity,
-    //     totalStudents
-    //   );
+    // resource calculation
+    const { hallsNeeded, roomsNeeded, invigilatorsNeeded } = calculateResources(
+      centre.totalHalls,
+      centre.totalRooms,
+      centre.roomCapacity,
+      centre.hallCapacity,
+      centreStat
+    );
 
-    // // Update the CentreLog with calculated resource allocation
-    // await CentreLog.findByIdAndUpdate(centreLogID, {
-    //   resourceAllocation: {
-    //     roomsNeeded,
-    //     hallsNeeded,
-    //     invigilatorsNeeded,
-    //     totalStudents,
-    //   },
-    // });
+    // Update the CentreLog with calculated resource allocation
+    await CentreLog.findByIdAndUpdate(centreLogID, {
+      resourceAllocation: {
+        roomsNeeded,
+        hallsNeeded,
+        invigilatorsNeeded,
+        totalStudents,
+      },
+    });
 
     console.log(`Resource allocation updated for CentreLog ID: ${centreLogID}`);
   } catch (error) {
