@@ -1,0 +1,6 @@
+/node_modules
+.env
+
+# Directory for output files
+/dist
+/build
