@@ -1,6 +1,5 @@
 //the sum of appliedStudentsCount in the same session(AM/PM) with different subjectCodes(characters before "-")
 
-
 interface SubjectID {
   _id: string;
   subjectCode: string;
@@ -18,62 +17,42 @@ export interface CentreStatistics {
 const centreStatistics: CentreStatistics[] = [
   {
     subjectID: {
-      _id: "66faf5825afc775e34f97b97",
-      subjectCode: "040S-i,ii",
+      _id: "66faf6315afc775e34f97b9e",
+      subjectCode: "032S-i",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 27,
+    appliedStudentsCount: 139,
     session: "AM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-i",
+      subjectCode: "032E-i",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 44,
+    appliedStudentsCount: 1,
     session: "AM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-iii",
+      subjectCode: "032S-ii",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 44,
-    session: "AM",
-  },
-  {
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "044S-i,ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 27,
-    session: "AM",
-  },
-  {
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 44,
+    appliedStudentsCount: 139,
     session: "PM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "050S-i,ii",
+      subjectCode: "032E-ii",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 22,
+    appliedStudentsCount: 1,
     session: "PM",
   },
 ];
@@ -255,6 +234,7 @@ const room_capacity = 20;
 const hall_capacity = 75;
 
 // Test the function with actual data
+
 // calculateResources(
 //   hall_available,
 //   room_available,

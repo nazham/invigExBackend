@@ -7,14 +7,17 @@ import attendanceRoutes from './routes/attendanceRoutes';
 import centreRoutes from './routes/centreRoutes';
 import centreLogRoutes from './routes/centreLogRoutes';
 import subjectRoutes from './routes/subjectRoutes';
+import invigilatorRoutes from "./routes/invigilatorRoutes";
+import cors from 'cors';
 
 dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB();
+app.use(cors({
+  origin: process.env.CLIENT
+})); 
 
 // Define routes
 app.use('/api/students', studentRoutes);
@@ -22,6 +25,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/exam-centre', centreRoutes);
 app.use('/api/centre-log', centreLogRoutes);
 app.use('/api/subject', subjectRoutes);
+app.use('/api/invigilator', invigilatorRoutes);
 
 
 app.get("/", (req: Request, res: Response) => {
@@ -29,3 +33,4 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 export default app;
+
