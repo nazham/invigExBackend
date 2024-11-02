@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Invigilator from "../models/Invigilator";
+import { Error } from 'mongoose';
+import { MongoError } from 'mongodb';
 
 // Create a new invigilator
 const createInvigilator = async (req: Request, res: Response) => {
@@ -8,13 +10,22 @@ const createInvigilator = async (req: Request, res: Response) => {
     const savedInvigilator = await newInvigilator.save();
     res.status(201).json(savedInvigilator);
   } catch (error) {
-    if (error instanceof Error) {
-      // Narrow down the error type to `Error` to access properties like `message`
-      res.status(400).json({ message: error.message });
-    } else {
-      // Fallback for unknown error types
-      res.status(400).json({ message: "An unknown error occurred" });
+    if (error instanceof Error.ValidationError) {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Could not create user due to some invalid fields!',
+        error: messages,
+      });
+    } else if ((error as MongoError).code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'A user with this email or phone number already exists!',
+      });
     }
+    res
+      .status(500)
+      .json({ success: false, message: 'Internal server error', error });
   }
 };
 
