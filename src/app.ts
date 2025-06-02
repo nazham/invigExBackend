@@ -17,8 +17,11 @@ const app: Express = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: process.env.CLIENT
-})); 
+  origin: process.env.CLIENT,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 // Logger middleware
 app.use(logger);
