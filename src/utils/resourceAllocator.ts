@@ -7,7 +7,7 @@ interface SubjectID {
   examType: string;
 }
 
-interface CentreStatistics {
+export interface CentreStatistics {
   subjectID: SubjectID;
   appliedStudentsCount: number;
   session: "AM" | "PM";
@@ -17,62 +17,42 @@ interface CentreStatistics {
 const centreStatistics: CentreStatistics[] = [
   {
     subjectID: {
-      _id: "66faf5825afc775e34f97b97",
-      subjectCode: "040S-i,ii",
+      _id: "66faf6315afc775e34f97b9e",
+      subjectCode: "032S-i",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 27,
+    appliedStudentsCount: 139,
     session: "AM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-i",
+      subjectCode: "032E-i",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 44,
+    appliedStudentsCount: 1,
     session: "AM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-iii",
+      subjectCode: "032S-ii",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 44,
-    session: "AM",
-  },
-  {
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "044S-i,ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 27,
-    session: "AM",
-  },
-  {
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "043S-ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 44,
+    appliedStudentsCount: 139,
     session: "PM",
   },
-  {
+{
     subjectID: {
       _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "050S-i,ii",
+      subjectCode: "032E-ii",
       name: "Mathematics",
       examType: "GCE OL",
     },
-    appliedStudentsCount: 22,
+    appliedStudentsCount: 1,
     session: "PM",
   },
 ];
@@ -121,18 +101,21 @@ export default function calculateResources(
   hall_capacity: number,
   data: CentreStatistics[]
 ) {
-  // Step 1: Get sessionSums
+  // 043-ii capacities
+  const specialHallCapacity = 60;
+  const specialRoomCapacity = 15;
+
+  // Get sessionSums
   const sessionSums = sumBySessionAndSubjectPrefix(data);
 
-  // Step 2: Initialize variables to hold results
-  let totalHallsNeeded = 0;
-  let totalRoomsNeeded = 0;
-  let totalInvigilatorsNeeded = 0;
+  // Variables to store the maximum requirements across all sessions
+  let maxHallsNeeded = 0;
+  let maxRoomsNeeded = 0;
+  let maxInvigilatorsNeeded = 0;
 
-  // Step 3: Iterate over each session in sessionSums
+  // Iterate over each session in sessionSums
   for (const session in sessionSums) {
     const subjectsInSession = sessionSums[session];
-    // console.log(subjectsInSession);
 
     let studentsInSession = 0;
     let specialStudentCount = 0;
@@ -154,8 +137,7 @@ export default function calculateResources(
     let roomsNeededForSpecial = 0;
     let invigilatorsNeededForSpecial = 0;
     let studentsRemainingForSpecial = specialStudentCount;
-    const specialHallCapacity = 60;
-    const specialRoomCapacity = 15;
+
     if (specialStudentCount > 0) {
       if (hall_available > 0) {
         // Calculate the maximum students halls can accommodate without exceeding hall_available
@@ -180,11 +162,11 @@ export default function calculateResources(
       invigilatorsNeededForSpecial = Math.ceil(specialStudentCount / 15);
     }
 
-    console.log("Hall needed for 043   :", hallsNeededForSpecial);
-    console.log("room needed for 043   :", roomsNeededForSpecial);
-    console.log("inv needed for 043    :", invigilatorsNeededForSpecial);
-    console.log("stu remaining for 043 :", studentsRemainingForSpecial);
-    console.log("--------------------------");
+    // console.log("Hall needed for 043   :", hallsNeededForSpecial);
+    // console.log("room needed for 043   :", roomsNeededForSpecial);
+    // console.log("inv needed for 043    :", invigilatorsNeededForSpecial);
+    // console.log("stu remaining for 043 :", studentsRemainingForSpecial);
+    // console.log("--------------------------");
 
     // Step 5: Calculate resources for other subjects (1 invigilator per 20/25 students)
     let hallsNeededForOthers = 0;
@@ -214,36 +196,35 @@ export default function calculateResources(
     let tempTotalInv =
       invigilatorsNeededForSpecial + invigilatorsNeededForOthers;
 
-    totalHallsNeeded = Math.max(tempTotalHalls, totalHallsNeeded);
-    totalRoomsNeeded = Math.max(tempTotalRooms, totalRoomsNeeded);
-    totalInvigilatorsNeeded = Math.max(tempTotalInv, totalInvigilatorsNeeded);
+    maxHallsNeeded = Math.max(tempTotalHalls, maxHallsNeeded);
+    maxRoomsNeeded = Math.max(tempTotalRooms, maxRoomsNeeded);
+    maxInvigilatorsNeeded = Math.max(tempTotalInv, maxInvigilatorsNeeded);
 
-    console.log("halls needed 4 others  :", hallsNeededForOthers);
-    console.log("room needed 4 others   :", roomsNeededForOthers);
-    console.log("inv needed 4 others    :", invigilatorsNeededForOthers);
-    console.log("stu remaining 4 others :", studentsRemainingForOthers);
+    // console.log("halls needed 4 others  :", hallsNeededForOthers);
+    // console.log("room needed 4 others   :", roomsNeededForOthers);
+    // console.log("inv needed 4 others    :", invigilatorsNeededForOthers);
+    // console.log("stu remaining 4 others :", studentsRemainingForOthers);
 
-    console.log("***********************");
+    // console.log("***********************");
 
-    console.log("total halls needed     :", totalHallsNeeded);
-    console.log("total rooms needed     :", totalRoomsNeeded);
-    console.log("total inv needed     :", totalInvigilatorsNeeded);
+    // console.log("total halls needed     :", maxHallsNeeded);
+    // console.log("total rooms needed     :", maxRoomsNeeded);
+    // console.log("total inv needed     :", maxInvigilatorsNeeded);
 
-    console.log("=========================");
+    // console.log("=========================");
   }
 
   // Step 7: Output the result
   console.log(
-    `Total Halls needed: ${totalHallsNeeded} (Available: ${hall_available})\n` +
-      `Total Rooms needed: ${totalRoomsNeeded} (Available: ${room_available})\n` +
-      `Total Invigilators needed: ${totalInvigilatorsNeeded} \n`
-    // `Remaining students unallocated: ${students_remaining} (All students: ${stu_count})`
+    `Total Halls needed: ${maxHallsNeeded} (Available: ${hall_available})\n` +
+      `Total Rooms needed: ${maxRoomsNeeded} (Available: ${room_available})\n` +
+      `Total Invigilators needed: ${maxInvigilatorsNeeded} \n`
   );
 
   return {
-    totalHallsNeeded,
-    totalRoomsNeeded,
-    totalInvigilatorsNeeded,
+    hallsNeeded: maxHallsNeeded,
+    roomsNeeded: maxRoomsNeeded,
+    invigilatorsNeeded: maxInvigilatorsNeeded,
   };
 }
 
@@ -253,10 +234,11 @@ const room_capacity = 20;
 const hall_capacity = 75;
 
 // Test the function with actual data
-calculateResources(
-  hall_available,
-  room_available,
-  room_capacity,
-  hall_capacity,
-  centreStatistics
-);
+
+// calculateResources(
+//   hall_available,
+//   room_available,
+//   room_capacity,
+//   hall_capacity,
+//   centreStatistics
+// );

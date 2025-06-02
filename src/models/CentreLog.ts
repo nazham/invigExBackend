@@ -1,13 +1,14 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+interface CentreStatistics {
+  subjectID: mongoose.Schema.Types.ObjectId;
+  appliedStudentsCount: number;
+  session: "AM" | "PM";
+}
 export interface ICentreLog extends Document {
   examDate: Date;
   examCenterID: mongoose.Schema.Types.ObjectId;
-  centreStatistics: {
-    subjectID: mongoose.Schema.Types.ObjectId;
-    appliedStudentsCount: number;
-    session: "AM" | "PM";
-  }[];
+  centreStatistics: CentreStatistics[];
   resourceAllocation: {
     roomsNeeded: number;
     hallsNeeded: number;
