@@ -1,5 +1,7 @@
 //the sum of appliedStudentsCount in the same session(AM/PM) with different subjectCodes(characters before "-")
 
+import { timeTable } from "./centreStatData";
+
 interface SubjectID {
   _id: string;
   subjectCode: string;
@@ -13,57 +15,11 @@ export interface CentreStatistics {
   session: "AM" | "PM";
 }
 
-// The input array with session and subject information
-const centreStatistics: CentreStatistics[] = [
-  {
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "032S-i",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 139,
-    session: "AM",
-  },
-{
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "032E-i",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 1,
-    session: "AM",
-  },
-{
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "032S-ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 139,
-    session: "PM",
-  },
-{
-    subjectID: {
-      _id: "66faf6315afc775e34f97b9e",
-      subjectCode: "032E-ii",
-      name: "Mathematics",
-      examType: "GCE OL",
-    },
-    appliedStudentsCount: 1,
-    session: "PM",
-  },
-];
+const SPECIAL_SUBJECT_CODE = "043S-ii";
 
-// Helper function to extract subjectCode prefix (characters before "-")
+// Extracts the subject code prefix (characters before "-")
 function getSubjectCodePrefix(subjectCode: string): string {
-  // Special case for ART subject as allocation differs
-  if (subjectCode !== "043S-ii") {
-    return subjectCode.split("-")[0];
-  }
-  return subjectCode;
+  return subjectCode === SPECIAL_SUBJECT_CODE ? subjectCode : subjectCode.split("-")[0];
 }
 
 // Main function to sum appliedStudentsCount by session and subjectCode prefix
@@ -187,7 +143,7 @@ export default function calculateResources(
 
     invigilatorsNeededForOthers = Math.ceil(
       (hallsNeededForOthers * hall_capacity) / 25 +
-        (roomsNeededForOthers * room_capacity) / 20
+      (roomsNeededForOthers * room_capacity) / 20
     );
 
     // Step 6: Sum up the totals for this session
@@ -217,8 +173,8 @@ export default function calculateResources(
   // Step 7: Output the result
   console.log(
     `Total Halls needed: ${maxHallsNeeded} (Available: ${hall_available})\n` +
-      `Total Rooms needed: ${maxRoomsNeeded} (Available: ${room_available})\n` +
-      `Total Invigilators needed: ${maxInvigilatorsNeeded} \n`
+    `Total Rooms needed: ${maxRoomsNeeded} (Available: ${room_available})\n` +
+    `Total Invigilators needed: ${maxInvigilatorsNeeded} \n`
   );
 
   return {
@@ -240,5 +196,5 @@ const hall_capacity = 75;
 //   room_available,
 //   room_capacity,
 //   hall_capacity,
-//   centreStatistics
+//   timeTable[0].stat
 // );
